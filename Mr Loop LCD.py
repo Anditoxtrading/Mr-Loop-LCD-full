@@ -175,7 +175,7 @@ def main():
 
                         else:
                             print("Verificando recompras")
-                            time.sleep(10)
+                            time.sleep(300)
                     else:
                         print("No hay posiciones en la lista. Esperando...")
                         time.sleep(5)
@@ -268,7 +268,7 @@ def main():
                             print("La posicion aun no se ha cargado para poner take profit")
 
                         # Esperar antes de la próxima iteración (ajusta según tus necesidades)
-                        time.sleep(20)
+                        time.sleep(300)
 
                     except Exception as e:
                         error_tp1=(f"Se produjo un error durante la verificación: {e}")
@@ -276,7 +276,7 @@ def main():
                         print(f"Se produjo un error durante la verificación: {e}")
                         
                     # Esperar antes de la próxima iteración del bucle interno
-                    time.sleep(15)
+                    time.sleep(120)
 
             except Exception as e:
                 error_tp2=(f"Se produjo un error en el segundo bucle: {e}")
@@ -341,7 +341,7 @@ def main():
                 else:
                     print("No es necesario cancelar las recompras aún, esperando...")
                 # interaccion del bucle
-                time.sleep(20)
+                time.sleep(180)
 
             except Exception as e:
                 error_bucle3=(f"Error en el tercer bucle: {e}")
