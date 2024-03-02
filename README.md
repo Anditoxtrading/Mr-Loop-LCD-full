@@ -47,7 +47,7 @@ Antes de ejecutar el script, instala las librerías de Python de Bybit y Telegra
 
 ## Contacto
 
-¡Espero que disfrutes utilizando Mr. Loop LCD para tus operaciones en Bybit! Si tienes alguna pregunta o sugerencia, no dudes en ponerte en contacto a través de [Telegram](https://t.me/AnditoJF).
+¡Espero que disfrutes utilizando Mr. Loop LCD para tus operaciones en Bybit! Si tienes alguna pregunta o sugerencia, no dudes en ponerte en contacto a través del grupo de telegram del bot [Telegram](https://t.me/+sHGMnNWU9RcxYTBh).
 
 ¡Buena suerte!
 
