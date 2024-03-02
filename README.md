@@ -33,10 +33,10 @@ Antes de utilizar el script, asegúrate de tener instalado Python en tu sistema.
 
 Antes de ejecutar el script, instala las librerías de Python de Bybit y Telegram utilizando los siguientes comandos:
 
-    ```python
+    
     pip install pybit
     pip install pyTelegramBotAPI
-    ```
+    
 
 ## Notas Importantes
 
