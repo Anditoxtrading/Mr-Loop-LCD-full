@@ -19,7 +19,7 @@ Lg_St = input('¿VAS A OPERAR PARA EN long o short? coloque en minusculas: ')
 qty = float(input('INGRESE LA CANTIDAD DE MONEDAS QUE VA A COMPRAR: '))
 LCD_threshold = float(input('INGRESE LA CANTIDAD DE MONEDAS QUE NO VA A DESCARGAR: '))
 factor_multiplicador_distancia = float(input('INGRESE EL %PORCENTAJE DE DISTANCIA PARA LAS RECOMPRAS: '))
-cant_recompras = int(input('INGRESE LA CANTIDAD DE RECOMPRAS: '))
+cant_recompras = int(input('INGRESE LA CANTIDAD DE RECOMPRAS O REVENTAS: '))
 qty_str = -LCD_threshold
 
 # Factor multiplicador para las recompras (Primer bucle)
