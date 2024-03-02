@@ -1,6 +1,6 @@
 # Mr. Loop LCD para Futuros de Bybit
 
-¡Bienvenido al script Mr. Loop LCD para Futuros de Bybit! Este script fue desarrollado para automatizar operaciones en Bybit, enfocándose exclusivamente en los pares USDT.
+¡Bienvenido al script Mr. Loop LCD para Futuros de Bybit! Este script fue desarrollado para automatizar operaciones de LCD en Bybit, enfocándose exclusivamente en los pares USDT.
 
 ## Requisitos Previos
 
