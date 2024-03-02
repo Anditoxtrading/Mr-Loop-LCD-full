@@ -1,5 +1,4 @@
 import time
-import sys
 import threading
 from pybit.unified_trading import HTTP
 import config
@@ -16,15 +15,21 @@ session = HTTP(
 
 # Parámetros para LCD
 simbolo = input('INGRESE EL TICK A OPERAR: ') + "USDT"
+Lg_St = input('¿VAS A OPERAR PARA EN long o short? coloque en minusculas: ')
 qty = float(input('INGRESE LA CANTIDAD DE MONEDAS QUE VA A COMPRAR: '))
 LCD_threshold = float(input('INGRESE LA CANTIDAD DE MONEDAS QUE NO VA A DESCARGAR: '))
 factor_multiplicador_distancia = float(input('INGRESE EL %PORCENTAJE DE DISTANCIA PARA LAS RECOMPRAS: '))
 cant_recompras = int(input('INGRESE LA CANTIDAD DE RECOMPRAS: '))
-
+qty_str = -LCD_threshold
 
 # Factor multiplicador para las recompras (Primer bucle)
 factor_multiplicador_cantidad = 0.40 
-qty_str = -LCD_threshold
+
+# Definir el lado de la operación según la dirección
+if Lg_St.lower() == 'long':
+    side = "Buy"
+else:
+    side = "Sell"
 
 
 try:
@@ -43,11 +48,11 @@ try:
         if positions_list and any(position['size'] != '0' for position in positions_list):
             print("Ya hay una posición abierta. No se abrirá otra posición.")
         else:
-            # Coloca la orden de mercado si no hay posiciones abiertas
+            # Colocar la orden de mercado si no hay posiciones abiertas
             response_market_order = session.place_order(
                 category="linear",
                 symbol=simbolo,
-                side="Buy",
+                side=side,
                 orderType="Market",
                 qty=qty,
             )
@@ -61,9 +66,9 @@ time.sleep(5)
 
 
 # Reemplaza "BOT_TOKEN" con tu token de acceso
-bot_token = ''
+bot_token = config.token_telegram
 bot = telebot.TeleBot(bot_token)
-chat_id=""
+chat_id= config.chat_id
 
 # Función para enviar mensajes a Telegram
 def enviar_mensaje_telegram(chat_id, mensaje):
@@ -105,15 +110,18 @@ def main():
                         
                         # calcular el precio del SL
                         distancia_sl = (cant_recompras * factor_multiplicador_distancia / 100) + 0.006
-                        price_sl = current_price - (current_price * distancia_sl)
+                        if response_positions['result']['list'][0]['side'] == 'Buy':
+                            price_sl = current_price - (current_price * distancia_sl)
+                        else:
+                            price_sl = current_price + (current_price * distancia_sl)
                     
                         # Verificar si no hay órdenes limit abiertas
                         limit_orders = (session.get_open_orders(category="linear", symbol=simbolo, openOnly=0, limit=10,)) 
 
-                        # Filtrar solo las órdenes límite de compra (Buy)
+                        # Filtrar ordenes limit
                         ordenes_abiertas = [
                             order for order in limit_orders.get('result', {}).get('list', [])
-                            if order.get('side') == 'Buy'
+                            if order.get('side') == side
                         ]
 
                         # Verificar si la cantidad de monedas es igual o menor que el umbral LCD_threshold y no hay órdenes limit abiertas
@@ -144,13 +152,17 @@ def main():
                                 size_nuevo = cantidad_orden # Actualiza size para la siguiente iteración
 
                                 # Calcula el precio para la orden límite
-                                precio_orden_limite = current_price - (current_price * porcentaje_distancia)
+                                if response_positions['result']['list'][0]['side'] == 'Buy':
+                                    precio_orden_limite = current_price - (current_price * porcentaje_distancia)
+                                else:
+                                    precio_orden_limite = current_price + (current_price * porcentaje_distancia)
+                                    
 
                                 # Coloca la orden límite
                                 response_limit_order = session.place_order(
                                     category="linear",
                                     symbol=simbolo,
-                                    side="Buy",
+                                    side=side,
                                     orderType="Limit",
                                     qty=str(cantidad_orden),
                                     price=str(precio_orden_limite),
@@ -163,7 +175,7 @@ def main():
 
                         else:
                             print("Verificando recompras")
-                            time.sleep(300)
+                            time.sleep(10)
                     else:
                         print("No hay posiciones en la lista. Esperando...")
                         time.sleep(5)
@@ -192,18 +204,25 @@ def main():
                         tamaño_for_takeprofit = float(positions_response['result']['list'][0]['size'])
                         take_profit_qty = tamaño_for_takeprofit - LCD_threshold
                         take_profit_qty=round(take_profit_qty, len(str(tamaño_for_takeprofit).split('.')[1]))
+                        if positions_response['result']['list'][0]['side'] == 'Buy':
+                            side_tp="Sell"
+                        else:
+                            side_tp="Buy"
+                        
+
                              
                         if precio_entrada_actual != precio_entrada_original:
+                            
                             
                             # Obtener órdenes límite abiertas
                             open_orders_responsetp = session.get_open_orders(category="linear", symbol=simbolo, openOnly=0, limit=1,)                  
 
-                            # Filtrar solo las órdenes límite de venta (Sell)
-                            sell_limit_orders = [order for order in open_orders_responsetp.get('result', {}).get('list', [])
-                                                if order.get('orderType') == "Limit" and order.get('side') == 'Sell']
+                            # Filtrar solo las órdenes límite para take profit
+                            tp_limit_orders = [order for order in open_orders_responsetp.get('result', {}).get('list', [])
+                                                if order.get('orderType') == "Limit" and order.get('side') == side_tp]
 
-                            # Iterar sobre las órdenes límite de venta para obtener y cancelar cada una
-                            for order in sell_limit_orders:
+                            # Iterar sobre las órdenes límite de tp
+                            for order in tp_limit_orders:
                                 take_profit_order_id = order['orderId']
                                 cancel_response = session.cancel_order(category="linear", symbol=simbolo, orderId=take_profit_order_id)
                                 if 'result' in cancel_response and cancel_response['result']:   
@@ -218,13 +237,16 @@ def main():
                             precio_entrada_original = precio_entrada_actual
 
                             # Calcular el nuevo precio para la orden de take profit
-                            precio_orden_takeprofit = precio_entrada_actual + (precio_entrada_actual * distancia_LCD)
+                            if positions_response['result']['list'][0]['side'] == 'Buy':
+                                precio_orden_takeprofit = precio_entrada_actual + (precio_entrada_actual * distancia_LCD)
+                            else:
+                                precio_orden_takeprofit = precio_entrada_actual - (precio_entrada_actual * distancia_LCD)
 
                             # Abrir la nueva orden de take profit
                             take_profit_order_response = session.place_order(
                                 category="linear",
                                 symbol=simbolo,
-                                side="Sell",
+                                side=side_tp,
                                 orderType="Limit",
                                 qty=str(take_profit_qty),
                                 price=str(precio_orden_takeprofit),
@@ -246,7 +268,7 @@ def main():
                             print("La posicion aun no se ha cargado para poner take profit")
 
                         # Esperar antes de la próxima iteración (ajusta según tus necesidades)
-                        time.sleep(300)
+                        time.sleep(20)
 
                     except Exception as e:
                         error_tp1=(f"Se produjo un error durante la verificación: {e}")
@@ -254,7 +276,7 @@ def main():
                         print(f"Se produjo un error durante la verificación: {e}")
                         
                     # Esperar antes de la próxima iteración del bucle interno
-                    time.sleep(120)
+                    time.sleep(15)
 
             except Exception as e:
                 error_tp2=(f"Se produjo un error en el segundo bucle: {e}")
@@ -279,13 +301,14 @@ def main():
                 )                  
 
                 # Filtrar solo las órdenes límite de compra (Buy)
-                buy_limit_orders = [
+                orders_limits = [
                     order for order in open_orders_response.get('result', {}).get('list', [])
-                    if order.get('side') == 'Buy'
+                    if order.get('side') == side
                 ]
 
+
                 # Verificar si hay menos de 6 órdenes límite de compra y el tamaño de la posición es igual o menor que el umbral
-                if tamaño_for_cancel <= LCD_threshold and len(buy_limit_orders) < cant_recompras:   
+                if tamaño_for_cancel <= LCD_threshold and len(orders_limits) < cant_recompras:   
 
                     # Cancelar Stop loss
                     cancel_sl =session.cancel_all_orders(category="linear", symbol=simbolo, orderFilter="StopOrder" )
@@ -294,7 +317,7 @@ def main():
                     print(mensaje_cancelsl)
                     
                     # Cancelar todas las órdenes abiertas
-                    for order in buy_limit_orders:         
+                    for order in orders_limits:         
                         order_id = order['orderId']
                         cancel_response = session.cancel_order(category="linear", symbol=simbolo, orderId=order_id)
 
@@ -312,13 +335,13 @@ def main():
                     # Obtener la PNL generada
                     for order in closed_orders_list:
                         pnl_cerrada = float(order['closedPnl'])
-                        mensaje_pnl = (f"Posición 🚚 descargada en {simbolo}, 💰💰💰 PNL realizado 💰💰💰: {pnl_cerrada}. Esperando a comenzar nuevo bucle...")
+                        mensaje_pnl = (f"Posición 🚚 descargada en {simbolo}, 💰💰💰 PNL realizado 💰💰💰: {pnl_cerrada} USDT. Esperando a comenzar nuevo bucle...")
                         enviar_mensaje_telegram(chat_id=chat_id, mensaje=mensaje_pnl) 
                         print(mensaje_pnl)
                 else:
                     print("No es necesario cancelar las recompras aún, esperando...")
                 # interaccion del bucle
-                time.sleep(180)
+                time.sleep(20)
 
             except Exception as e:
                 error_bucle3=(f"Error en el tercer bucle: {e}")
