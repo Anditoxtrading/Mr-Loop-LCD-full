@@ -23,7 +23,7 @@ Antes de utilizar el script, asegúrate de tener instalado Python en tu sistema.
     token_telegram = 'TU_TOKEN_BOT'
     ```
 
-4. Para encontrar tu Chat ID en Telegram, utiliza [@userdetailsbot](https://t.me/userdetailsbot) y agrega el Chat ID al archivo `config.py`.
+4. Para encontrar tu Chat ID en Telegram, utiliza [@@userdatailsbot](https://t.me/userdetailsbot) y agrega el Chat ID al archivo `config.py`.
 
     ```python
     chat_id = "TU_CHAT_ID"
