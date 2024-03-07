@@ -250,6 +250,7 @@ def main():
                                 orderType="Limit",
                                 qty=str(take_profit_qty),
                                 price=str(precio_orden_takeprofit),
+                                reduceOnly=True,
                             )
 
                             # Extraer información relevante de la respuesta de la API
