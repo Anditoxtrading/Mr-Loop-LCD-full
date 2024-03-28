@@ -42,7 +42,7 @@ Antes de ejecutar el script, instala las librerías de Python de Bybit y Telegra
 ## Notas Importantes
 
 - Este script está diseñado específicamente para la plataforma Bybit.
-- Al descargar tendras 2 archivos para el script, uno que dice full ese tiene la funcion de telegram y el otro que dice telegram off ese solo te envia los mensajes a la consola de python y no utiliza telegram.
+- Al descargar tendras 2 archivos para el script, uno que dice full, ese tiene la funcion de telegram y el otro que dice Version no telegram, ese solo te envia los mensajes a la consola de python y no utiliza telegram.
 - Es posible que si no tienes tu cuenta unificada en Bybit, debido a algunas funciones de la API, el bot presente algún error.
 - Si decides utilizar este script, ten en cuenta que no soy un programador profesional. He desarrollado este bot basándome en herramientas disponibles y la documentación de las API de Bybit.
 - Se recomienda no dejar todo tu capital en la billetera asociada al bot. Transfiere únicamente los fondos necesarios para operar y considera mover el resto a otra billetera o subcuenta.
