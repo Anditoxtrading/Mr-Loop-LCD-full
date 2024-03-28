@@ -16,9 +16,9 @@ session = HTTP(
 simbolo = input('INGRESE EL TICK A OPERAR: ').upper() + "USDT"
 Lg_St = input('¿VAS A OPERAR PARA EN long o short? ').lower()
 qty = float(input('INGRESE LA CANTIDAD DE MONEDAS QUE VA A COMPRAR: '))
-LCD_threshold = float(input('INGRESE LA CANTIDAD DE MONEDAS QUE NO VA A DESCARGAR: '))
 factor_multiplicador_distancia = float(input('INGRESE EL %PORCENTAJE DE DISTANCIA PARA LAS RECOMPRAS: '))
 cant_recompras = int(input('INGRESE LA CANTIDAD DE RECOMPRAS O REVENTAS: '))
+LCD_threshold = qty
 qty_str = -LCD_threshold
 
 # Factor multiplicador para las recompras (Primer bucle)
