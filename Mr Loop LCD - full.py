@@ -357,7 +357,7 @@ def main():
 
     # Iniciar los hilos
     hilo_primer_bucle.start()
-    time.sleep(15)  # Esperar 10 segundos antes de iniciar los próximos bucles
+    time.sleep(35)  # Esperar  segundos antes de iniciar los próximos bucles
     hilo_segundo_bucle.start()
     hilo_tercer_bucle.start()
 
