@@ -330,7 +330,7 @@ def main():
                         print(mensaje_cancel)
 
                     # Obtener la lista de órdenes cerradas para calcular la PNL generada
-                    closed_orders_response = session.get_closed_pnl(category="linear", symbol=simbolo, side="Sell", limit=1)
+                    closed_orders_response = session.get_closed_pnl(category="linear", symbol=simbolo, limit=1)
                     closed_orders_list = closed_orders_response['result']['list']
 
                     # Obtener la PNL generada
