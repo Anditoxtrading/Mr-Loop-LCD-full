@@ -308,7 +308,7 @@ def main():
                         print(mensaje_cancel)
 
                     # Obtener la lista de órdenes cerradas para calcular la PNL generada
-                    closed_orders_response = session.get_closed_pnl(category="linear", symbol=simbolo, side="Sell", limit=1)
+                    closed_orders_response = session.get_closed_pnl(category="linear", symbol=simbolo, limit=1)
                     closed_orders_list = closed_orders_response['result']['list']
 
                     # Obtener la PNL generada
@@ -333,7 +333,7 @@ def main():
 
     # Iniciar los hilos
     hilo_primer_bucle.start()
-    time.sleep(15)  # Esperar 10 segundos antes de iniciar los próximos bucles
+    time.sleep(35)  # Esperar segundos antes de iniciar los próximos bucles
     hilo_segundo_bucle.start()
     hilo_tercer_bucle.start()
 
