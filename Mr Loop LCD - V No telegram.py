@@ -333,13 +333,13 @@ def main():
 
     # Iniciar los hilos
     hilo_primer_bucle.start()
-    time.sleep(35)  # Esperar segundos antes de iniciar los próximos bucles
+    time.sleep(40)  # Esperar segundos antes de iniciar los próximos bucles
     hilo_segundo_bucle.start()
     hilo_tercer_bucle.start()
 
     # Esperar a que los hilos terminen (esto no sucederá ya que los bucles se ejecutan indefinidamente)
     hilo_primer_bucle.join()
-    time.sleep(15)
+    time.sleep(20)
     hilo_segundo_bucle.join()
     hilo_tercer_bucle.join()
 
